@@ -11,13 +11,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
+    // Called when the scene is being connected to the app session
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
+        // Start monitoring network status
         NetworkMonitor.shared.startMonitoring()
         
+        // Ensure the scene is a valid UIWindowScene
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        // Create a UIWindow for the given scene
         let window = UIWindow(windowScene: windowScene)
         self.window = window
+        
+        // Decide which initial view controller to display based on jailbreak detection
         if JailBreakDetector.isJailbroken() {
             makeJailBreakWarningViewController()
         } else {
@@ -26,35 +33,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+        // Scene was released by the system. Clean up resources here if needed.
     }
     
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        // Scene moved from inactive to active state. Resume tasks if needed.
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
+        // Scene will move from active to inactive. Useful for temporary interruptions.
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+        // Scene is transitioning from background to foreground. Undo background changes here.
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+        // Scene transitioned to background. Save state and release resources here.
     }
 }
 
 extension SceneDelegate {
+    
+    // Setup the view controller shown when the device is detected as jailbroken
     private func makeJailBreakWarningViewController() {
         let warningVC = WarningViewController()
         warningVC.title = "All In Api"
@@ -63,13 +64,17 @@ extension SceneDelegate {
         window?.makeKeyAndVisible()
     }
     
+    // Setup the normal user list view controller if the device is safe
     private func makeUserListViewController() {
         let userListVC = UserListViewController()
         userListVC.title = "All In Api"
+        
+        // Inject dependencies: network client → resource → view model
         let networkClient = NetworkClient()
         let userListResource = UserListResource(networkClient: networkClient)
         let userlistViewModel = UserListViewModel(userListResource: userListResource)
         userListVC.viewModel = userlistViewModel
+        
         let navVC = UINavigationController(rootViewController: userListVC)
         window?.rootViewController = navVC
         window?.makeKeyAndVisible()

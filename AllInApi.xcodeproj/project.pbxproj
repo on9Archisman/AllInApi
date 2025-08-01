@@ -30,7 +30,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		03CEC2712E3CFBD4007BF56B /* Exceptions for "AllInApi" folder in "AllInApi" target */ = {
+		03CEC2B12E3D038A007BF56B /* Exceptions for "AllInApi" folder in "AllInApi" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -40,14 +40,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		03CEC24B2E3CFBD2007BF56B /* AllInApi */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				03CEC2712E3CFBD4007BF56B /* Exceptions for "AllInApi" folder in "AllInApi" target */,
-			);
-			path = AllInApi;
-			sourceTree = "<group>";
-		};
 		03CEC2622E3CFBD4007BF56B /* AllInApiTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AllInApiTests;
@@ -56,6 +48,14 @@
 		03CEC26C2E3CFBD4007BF56B /* AllInApiUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AllInApiUITests;
+			sourceTree = "<group>";
+		};
+		03CEC2A72E3D0389007BF56B /* AllInApi */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				03CEC2B12E3D038A007BF56B /* Exceptions for "AllInApi" folder in "AllInApi" target */,
+			);
+			path = AllInApi;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,7 +88,7 @@
 		03CEC2402E3CFBD2007BF56B = {
 			isa = PBXGroup;
 			children = (
-				03CEC24B2E3CFBD2007BF56B /* AllInApi */,
+				03CEC2A72E3D0389007BF56B /* AllInApi */,
 				03CEC2622E3CFBD4007BF56B /* AllInApiTests */,
 				03CEC26C2E3CFBD4007BF56B /* AllInApiUITests */,
 				03CEC24A2E3CFBD2007BF56B /* Products */,
@@ -121,7 +121,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				03CEC24B2E3CFBD2007BF56B /* AllInApi */,
+				03CEC2A72E3D0389007BF56B /* AllInApi */,
 			);
 			name = AllInApi;
 			packageProductDependencies = (

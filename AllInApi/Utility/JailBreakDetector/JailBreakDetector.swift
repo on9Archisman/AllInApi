@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-/// Protocol defining jailbreaking detection
 protocol JailBreakDetectorProtocol {
     static func isJailbroken() -> Bool
 }
@@ -18,25 +17,25 @@ struct JailBreakDetector: JailBreakDetectorProtocol {
     /// Returns true if the device appears to be jailbroken.
     static func isJailbroken() -> Bool {
 #if targetEnvironment(simulator)
-        return false // Skip jailbreak check on simulator
+        return false // Don't required to check in simulator
 #else
-        if hasJailbreakFiles() { return true }         // Check for suspicious files
-        if canAccessRestrictedAreas() { return true }  // Try accessing protected system directories
-        if canOpenCydiaURL() { return true }           // Check if Cydia URL scheme can be opened
+        if hasJailbreakFiles() { return true }
+        if canAccessRestrictedAreas() { return true }
+        if canOpenCydiaURL() { return true }
         return false
 #endif
     }
     
-    /// Checks for the existence of common jailbreak-related files
+    /// Check for presence of known jailbreak files
     private static func hasJailbreakFiles() -> Bool {
         let jailbreakPaths = [
-            "/Applications/Cydia.app",                                // Cydia app
-            "/Library/MobileSubstrate/MobileSubstrate.dylib",         // Substrate
-            "/bin/bash",                                              // Shell access
-            "/usr/sbin/sshd",                                         // SSH daemon
-            "/etc/apt",                                               // APT config
-            "/private/var/lib/apt/",                                  // APT libraries
-            "/usr/bin/ssh"                                            // SSH binary
+            "/Applications/Cydia.app",
+            "/Library/MobileSubstrate/MobileSubstrate.dylib",
+            "/bin/bash",
+            "/usr/sbin/sshd",
+            "/etc/apt",
+            "/private/var/lib/apt/",
+            "/usr/bin/ssh"
         ]
         
         for path in jailbreakPaths {
@@ -47,12 +46,12 @@ struct JailBreakDetector: JailBreakDetectorProtocol {
         return false
     }
     
-    /// Attempts to write outside the sandbox to detect elevated access
+    /// Try to access restricted areas (e.g., outside sandbox)
     private static func canAccessRestrictedAreas() -> Bool {
         let testPath = "/private/jailbreak_test.txt"
         do {
             try "test".write(toFile: testPath, atomically: true, encoding: .utf8)
-            // Clean up test file if write succeeds
+            // Clean up
             try FileManager.default.removeItem(atPath: testPath)
             return true
         } catch {
@@ -60,7 +59,7 @@ struct JailBreakDetector: JailBreakDetectorProtocol {
         }
     }
     
-    /// Checks if the device can handle a known jailbreak app URL scheme
+    /// Try to open Cydia's URL scheme
     private static func canOpenCydiaURL() -> Bool {
         guard let url = URL(string: "cydia://package/com.example.package") else {
             return false

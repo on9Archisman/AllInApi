@@ -10,9 +10,6 @@ import Combine
 
 class UserListViewController: UIViewController {
     
-    // MARK: - UI Elements
-    
-    // Activity indicator to show loading state
     let loader: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: .large)
         loader.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +17,6 @@ class UserListViewController: UIViewController {
         return loader
     }()
     
-    // Main table view for displaying user list
     let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,38 +26,29 @@ class UserListViewController: UIViewController {
         return tableView
     }()
     
-    // Optional custom header view
     private var headerView: UIView?
     
-    // Combine cancellables to store subscriptions
     var cancellables = Set<AnyCancellable>()
-    
-    // ViewModel injected from outside
     var viewModel: UserListViewModel?
-    
-    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
         setupUI()
         setConstraints()
         bindViewModel()
         
-        // Initial fetch
         Task {
             await viewModel?.fetchUsers()
         }
     }
     
-    // MARK: - Setup
-    
     fileprivate func setupUI() {
         view.addSubview(tableView)
         view.addSubview(loader)
         
-        // TableView configuration
         tableView.dataSource = self
         tableView.delegate = self
         tableView.estimatedRowHeight = 60
@@ -73,25 +60,21 @@ class UserListViewController: UIViewController {
             loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loader.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
     }
     
-    // MARK: - Bind ViewModel
-    
     fileprivate func bindViewModel() {
-        // Observe users array
         viewModel?.$users
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] output in
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
         
-        // Observe loading state
         viewModel?.$isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
@@ -101,11 +84,11 @@ class UserListViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        // Observe error message
         viewModel?.$errorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
-                guard let self = self, let message = errorMessage else { return }
+                guard let self = self else { return }
+                guard let message = errorMessage else { return }
                 AlertManager.showConfirmationAlert(
                     onViewController: self,
                     title: "Error",
@@ -123,8 +106,6 @@ class UserListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    // MARK: - Pagination Spinner
-    
     private func setPaginationFooterView(_ isLoading: Bool) {
         if isLoading && viewModel?.users.count ?? 0 > 0 {
             let spinner = UIActivityIndicatorView(style: .medium)
@@ -138,11 +119,7 @@ class UserListViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource & Delegate
-
 extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
-    
-    // Custom header view with static title
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard viewModel?.users.count ?? 0 > 0 else { return nil }
         
@@ -157,6 +134,7 @@ extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
             label.textColor = .darkGray
             
             header.addSubview(label)
+            
             NSLayoutConstraint.activate([
                 label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 8),
                 label.centerYAnchor.constraint(equalTo: header.centerYAnchor)
@@ -188,19 +166,18 @@ extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    // Optional lazy loading using willDisplay
     /*
      func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-         guard let vm = viewModel else { return }
-         if indexPath.row == vm.users.count - 1 {
-             Task {
-                 await vm.fetchUsers()
-             }
-         }
+     guard let vm = viewModel else { return }
+     
+     if indexPath.row == vm.users.count - 1 {
+     Task {
+     await vm.fetchUsers()
+     }
+     }
      }
      */
     
-    // Lazy loading using scroll detection
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let viewModel = viewModel else { return }
         
@@ -208,7 +185,7 @@ extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
         let contentHeight = scrollView.contentSize.height
         let visibleHeight = scrollView.frame.size.height
         
-        // Fetch more users if near bottom and not already loading
+        // When user scrolls near the bottom (within 1.5x of visible area)
         let shouldFetchMore = offsetY > contentHeight - visibleHeight * 1.5
         if shouldFetchMore && !viewModel.isPaginating && !viewModel.isLoading && viewModel.users.count > 0 {
             Task {

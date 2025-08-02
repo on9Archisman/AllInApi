@@ -10,14 +10,14 @@ import Combine
 
 class UserListViewController: UIViewController {
     
-    let loader: UIActivityIndicatorView = {
+    private let loader: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: .large)
         loader.translatesAutoresizingMaskIntoConstraints = false
         loader.color = .gray
         return loader
     }()
     
-    let tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UserListTableViewCell.self, forCellReuseIdentifier: "UserCell")

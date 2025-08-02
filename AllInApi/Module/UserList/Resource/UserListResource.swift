@@ -14,7 +14,7 @@ protocol UserListResourceProtocol {
 struct UserListResource: UserListResourceProtocol {
     private let networkClient: NetworkClientProtocol
     
-    public init(networkClient: NetworkClientProtocol) {
+    init(networkClient: NetworkClientProtocol) {
         self.networkClient = networkClient
     }
     

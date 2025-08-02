@@ -9,7 +9,7 @@ import UIKit
 
 class UserListTableViewCell: UITableViewCell {
     
-    let lblName: UILabel = {
+    private let lblName: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -19,7 +19,7 @@ class UserListTableViewCell: UITableViewCell {
         return label
     }()
     
-    let lblEmail: UILabel = {
+    private let lblEmail: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false

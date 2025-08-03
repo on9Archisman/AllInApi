@@ -7,6 +7,10 @@
 
 import Foundation
 
-struct UserDetailsViewModel {
+class UserDetailsViewModel {
+    @Published var userDetails: User?
     
+    init(userDetails: User?) {
+        self.userDetails = userDetails
+    }
 }

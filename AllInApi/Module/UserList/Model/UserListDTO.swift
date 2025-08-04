@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct UserListDTO: Codable {
+struct UserListDTO: Codable, Equatable {
     let users: [User]?
     let total, skip, limit: Int?
     let message: String?
 }
 
-struct User: Codable {
+struct User: Codable, Equatable {
     let id: Int?
     let firstName, lastName, email, image: String?
 }

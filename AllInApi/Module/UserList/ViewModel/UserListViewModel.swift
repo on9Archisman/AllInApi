@@ -18,13 +18,19 @@ protocol UserListViewModelProtocol {
 
 class UserListViewModel: ObservableObject, UserListViewModelProtocol {
     private let userListResource: UserListResourceProtocol
+    private let networkStatusProvider: NetworkStatusProvider
+    
     private(set) var fetchLimit = 20
     private(set) var fetchOffset = 0
     private(set) var totalUsers = 0
     private(set) var isPaginating = false
     
-    init(userListResource: UserListResourceProtocol) {
+    init(
+        userListResource: UserListResourceProtocol,
+        networkStatusProvider: NetworkStatusProvider
+    ) {
         self.userListResource = userListResource
+        self.networkStatusProvider = networkStatusProvider
     }
     
     @Published var users: [User] = []
@@ -32,7 +38,7 @@ class UserListViewModel: ObservableObject, UserListViewModelProtocol {
     @Published private(set) var errorMessage: String?
     
     func fetchUsers() async {
-        guard NetworkMonitor.shared.isConnected else {
+        guard networkStatusProvider.isConnected else {
             errorMessage = NetworkError.noInternet.errorDescription
             return
         }

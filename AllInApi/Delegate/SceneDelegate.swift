@@ -60,7 +60,10 @@ extension SceneDelegate {
         userListVC.title = "All In Api"
         let networkClient = NetworkClient()
         let userListResource = UserListResource(networkClient: networkClient)
-        let userlistViewModel = UserListViewModel(userListResource: userListResource)
+        let userlistViewModel = UserListViewModel(
+            userListResource: userListResource,
+            networkStatusProvider: NetworkMonitor.shared
+        )
         userListVC.viewModel = userlistViewModel
         let navVC = UINavigationController(rootViewController: userListVC)
         window?.rootViewController = navVC

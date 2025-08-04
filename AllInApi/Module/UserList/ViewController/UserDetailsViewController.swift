@@ -10,7 +10,7 @@ import Combine
 
 class UserDetailsViewController: UIViewController {
     
-    private let imageView: UIImageView = {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .clear
@@ -18,7 +18,7 @@ class UserDetailsViewController: UIViewController {
         return imageView
     }()
     
-    private let nameLabel: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.textColor = .label
@@ -26,7 +26,7 @@ class UserDetailsViewController: UIViewController {
         return label
     }()
     
-    private let emailLabel: UILabel = {
+    let emailLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .secondaryLabel
@@ -72,8 +72,9 @@ class UserDetailsViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        viewModel?.userDetails
-            .publisher.receive(on: DispatchQueue.main)
+        viewModel?.$userDetails
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
                 self?.imageView.loadImage(from: user.image ?? "", placeholderImage: UIImage(named: "user"))
                 self?.nameLabel.text = (user.firstName ?? "") + " " + (user.lastName ?? "")
@@ -81,4 +82,5 @@ class UserDetailsViewController: UIViewController {
             }
             .store(in: &cancellable)
     }
+    
 }
